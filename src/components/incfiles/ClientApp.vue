@@ -1,0 +1,84 @@
+<template>
+  <div class="body">
+    <section id="main-body" class="bg-dark-2 text-white">
+      <div v-if="this.client.login == 'online'" class="flex-row-space-between-center">
+        <h1>Xin chào: {{ client.username }}</h1>
+        <!-- <h1>{{ $store.state.user.email }}</h1> -->
+        <!-- <h1>{{ client.password }}</h1> -->
+        <!-- <h1>{{ $store.state.user.token }}</h1> -->
+        <!-- <p>token: {{ client.token }}</p> -->
+        <button class="btn btn-danger" @click="logoutUser">Logout</button>
+      </div>
+      <div v-if="this.client.login == 'offline'" class="flex-row-end">
+        <button herf="/login" class="btn btn-primary" @click="logoutUser">Login</button>
+      </div>
+    </section>
+  </div>
+</template>
+
+<script>
+import axios from "axios";
+export default {
+  data() {
+    return {
+      id: "",
+      name: "",
+      username: "",
+      email: "",
+      password: "",
+      client: {
+        email: localStorage.getItem("email"),
+        token: localStorage.getItem("token"),
+        username: "",
+        login: localStorage.getItem("login"),
+      },
+    };
+  },
+
+  created() {
+    // this.checkUser();
+  },
+  mounted() {
+    console.log(this);
+    this.checkUser();
+  },
+  computed: {
+    // ...mapper.mapState(["product", "products"]),
+  },
+
+  methods: {
+    // ...mapper.mapActions(["click", "fetchProducts"]),
+
+    logoutUser() {
+      localStorage.removeItem("email");
+      localStorage.removeItem("token");
+      localStorage.setItem("login", "offline");
+      // this.$router.push({ name: "users.login" });
+      window.location.href = "/login";
+    },
+    async checkUser() {
+      console.log(this);
+      console.log(this.$store.state.user.email);
+      const login = await axios
+        .post("http://localhost:8000/api/client", {
+          email: this.$store.state.user.email,
+        })
+        .then((res) => {
+          if (!res.data.success) {
+            console.log(res.data.success);
+            console.log(res.status);
+            localStorage.setItem("login", "offline");
+          }
+
+          if (res.data.success) {
+            // localStorage.setItem("login", "online");
+            this.client.username = res.data.user.username;
+            this.client.password = res.data.user.password;
+            console.log(this.$store.state.user.email);
+            localStorage.setItem("login", "online");
+          }
+        });
+    },
+  },
+};
+</script>

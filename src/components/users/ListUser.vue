@@ -2,8 +2,8 @@
   <div class="body">
     <section id="main-body">
       <div class="pricing-header px-3 py-3 pt-md-5 pd-md-4 mx-auto text-center">
-        <h2 class="display-4">Product Management</h2>
-        <p><router-link to="/admin/products/create">Add New</router-link></p>
+        <h2 class="display-4">Users Management</h2>
+        <p><router-link to="/admin/users/create">Add New</router-link></p>
       </div>
       <div class="container">
         <div class="card-deck mb-3 text-center scroll-x">
@@ -11,26 +11,26 @@
             <thead>
               <tr>
                 <th scope="col">#</th>
-                <th scope="col">Product name</th>
-                <th scope="col" @click="changeCurrentDir()">Price</th>
+                <th scope="col">User Name</th>
+                <th scope="col" @click="changeCurrentDir()">Email</th>
                 <th scope="col">Time</th>
                 <th scope="col">Action</th>
               </tr>
             </thead>
 
             <tbody>
-              <tr v-for="(product, index) in products" :key="index">
+              <tr v-for="(user, index) in users" :key="index">
                 <td scope="row">{{ index }}</td>
-                <td>{{ product.name }}</td>
-                <td>{{ product.price }}</td>
-                <td>{{ product.time }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.password }}</td>
                 <td class="gap-10px">
-                  <router-link :to="{ name: 'product.edit', params: { id: product.id } }">
+                  <router-link :to="{ name: 'users.edit', params: { id: user.id } }">
                     <b-button variant="primary">
                       <i class="fa fa-edit"></i>
                     </b-button>
                   </router-link>
-                  <b-button variant="danger" @click="onDelete(product.id)">
+                  <b-button variant="danger" @click="onDelete(user.id)">
                     <i class="fa fa-trash"></i>
                   </b-button>
                 </td>
@@ -54,7 +54,7 @@ export default {
   data() {
     return {
       list: [],
-      products: [],
+      users: [],
       currentSort: "time",
       currentSortDir: 1,
     };
@@ -67,15 +67,15 @@ export default {
   },
   methods: {
     getAll() {
-      this.$request.get("http://localhost:8000/api/products").then((res) => {
-        this.products = res.data;
+      this.$request.get("http://localhost:8000/api/users").then((res) => {
+        this.users = res.data;
         // sort price
         // this.products = this.products.sort((a, b) => a.price - b.price);
         // sort reverse
-        this.products = this.products.reverse();
+        this.users = this.users.reverse();
       });
     },
-    onDelete(productId) {
+    onDelete(userId) {
       this.$swal
         .fire({
           title: "Delete?",
@@ -95,7 +95,7 @@ export default {
         .then((result) => {
           if (result.isConfirmed) {
             this.$request
-              .delete(`http://localhost:8000/api/products/${productId}`)
+              .delete(`http://localhost:8000/api/users/${userId}`)
               .then((res) => {
                 if (res.data.success) {
                   this.$swal.fire("Đã Xóa", "", "success");
@@ -119,8 +119,8 @@ export default {
   },
   watch: {
     currentSortDir(value) {
-      console.log(this.products);
-      this.products.sort((a, b) => this.currentSortDir);
+      console.log(this.users);
+      this.users.sort((a, b) => this.currentSortDir);
     },
   },
   computed: {},

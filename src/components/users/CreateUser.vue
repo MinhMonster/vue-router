@@ -3,8 +3,8 @@
     <section id="main-body">
       <div class="add-product">
         <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-          <h3 class="display-5">Product Information</h3>
-          <router-link to="/admin/products">Back</router-link>
+          <h3 class="display-5">Users Information</h3>
+          <router-link to="/users">Back</router-link>
         </div>
         <div class="container">
           <form
@@ -14,50 +14,50 @@
             novalidate
           >
             <div class="form-group row">
-              <label for="inputName" class="col-md-3 col-form-label">Product Name</label>
+              <label for="inputName" class="col-md-3 col-form-label">Username</label>
               <div class="col-md-9">
                 <input
                   type="text"
                   class="form-control"
-                  v-model="product.name"
+                  v-model="user.username"
                   @blur="validate()"
-                  v-bind:class="{ 'is-invalid': errors.name }"
+                  v-bind:class="{ 'is-invalid': errors.username }"
                   required
                 />
-                <div class="feedback-invalid" v-if="errors.name">{{ errors.name }}</div>
+                <div class="feedback-invalid" v-if="errors.username">
+                  {{ errors.username }}
+                </div>
               </div>
             </div>
             <div class="form-group row">
-              <label for="inputPrice" class="col-md-3 col-form-label"
-                >Product Price</label
-              >
+              <label for="inputPrice" class="col-md-3 col-form-label">Email:</label>
               <div class="col-md-9">
                 <input
-                  type="number"
+                  type="email"
                   class="form-control"
-                  v-model.number="product.price"
+                  v-model="user.email"
                   @blur="validate()"
-                  v-bind:class="{ 'is-invalid': errors.price }"
+                  v-bind:class="{ 'is-invalid': errors.email }"
                   required
                 />
-                <div class="feedback-invalid" v-if="errors.price">{{ errors.price }}</div>
+                <div class="feedback-invalid" v-if="errors.email">{{ errors.email }}</div>
               </div>
             </div>
             <div class="form-group row">
               <label for="inputDescription" class="col-md-3 col-form-label"
-                >Product Description</label
+                >Password</label
               >
               <div class="col-md-9">
-                <textarea
-                  type="text"
+                <input
+                  type="password"
                   class="form-control"
-                  v-model="product.description"
+                  v-model="user.password"
                   @blur="validate()"
-                  v-bind:class="{ 'is-invalid': errors.description }"
+                  v-bind:class="{ 'is-invalid': errors.password }"
                   required
-                ></textarea>
-                <div class="feedback-invalid" v-if="errors.description">
-                  {{ errors.description }}
+                />
+                <div class="feedback-invalid" v-if="errors.password">
+                  {{ errors.password }}
                 </div>
               </div>
             </div>
@@ -77,69 +77,67 @@
   </div>
 </template>
 <script>
-import { mapActions } from "vuex";
 export default {
-  name: "ProductDta",
+  name: "ProductData",
   data() {
     return {
       errors: {
         name: "",
-        price: "",
-        description: "",
+        username: "",
+        password: "",
+        email: "",
       },
-      product: {
+      user: {
         id: "",
         name: "",
-        price: "",
-        description: "",
+        username: "",
+        password: "",
+        email: "",
         time: "",
       },
     };
   },
   created() {
-    const productId = this.$route.params.id;
-    console.log(productId);
-    if (productId) {
-      this.getProduct(productId);
+    const userId = this.$route.params.id;
+    console.log(userId);
+    if (userId) {
+      this.getUsers(userId);
     }
   },
   methods: {
-    ...mapActions([""]),
     validate() {
       let isValid = true;
       this.errors = {
-        name: "",
-        price: "",
-        description: "",
+        username: "",
       };
-      if (!this.product.name) {
-        this.errors.name = "Error name";
+      if (!this.user.username) {
+        this.errors.username = "Error username";
         isValid = false;
       }
-      if (!this.product.price) {
-        this.errors.price = "Error price";
-        isValid = false;
-      } else if (!this.isNumber(this.product.price)) {
-        this.errors.price = "price is Number";
-        isValid = false;
-      }
-      if (!this.product.description) {
-        this.errors.description = "Loi description";
-        isValid = false;
-      }
+      //       if (!this.product.price) {
+      //         this.errors.price = "Error price";
+      //         isValid = false;
+      //       } else if (!this.isNumber(this.product.price)) {
+      //         this.errors.price = "price is Number";
+      //         isValid = false;
+      //       }
+      // if (!this.user.description) {
+      //   this.errors.description = "Loi description";
+      //   isValid = false;
+      // }
       return isValid;
     },
-    isNumber(value) {
-      return /^\d*$/.test(value);
-    },
+    // isNumber(value) {
+    //   return /^\d*$/.test(value);
+    // },
     save() {
       if (this.validate()) {
-        if (this.product.id) {
+        if (this.user.id) {
           this.$request
-            .put(`http://localhost:8000/api/products/${this.product.id}`, this.product)
+            .put(`http://localhost:8000/api/users/${this.user.id}`, this.user)
             .then((res) => {
               if (res.data.success) {
-                this.$router.push({ name: "product.list" });
+                this.$router.push({ name: "users.list" });
                 return;
               }
               alert("Errors");
@@ -159,26 +157,27 @@ export default {
         // newID = max + 1
         // this.product.id = newID
         // console.log(newID)
-        this.product.time = new Date().toLocaleString();
-        this.$request
-          .post("http://localhost:8000/api/products", this.product)
-          .then((res) => {
-            if (res.data.success) {
-              this.$router.push({ name: "product.list" });
-            }
-          });
+        this.user.time = new Date().toLocaleString();
+        this.$request.post("http://localhost:8000/api/users", this.user).then((res) => {
+          if (res.data.success) {
+            this.$router.push({ name: "users.list" });
+          } else if (!res.data.success) {
+            alert("Đã Tồn Tại");
+          }
+        });
       }
     },
-    getProduct(productId) {
-      this.$request.get(`http://localhost:8000/api/products/${productId}`).then((res) => {
-        this.product = res.data;
+    getUsers(userId) {
+      this.$request.get(`http://localhost:8000/api/users/${userId}`).then((res) => {
+        this.user = res.data;
         // console.log(this.product)
       });
     },
     reset() {
-      (this.product.name = ""),
-        (this.product.price = ""),
-        (this.product.description = "");
+      this.user.name = "";
+      this.user.username = "";
+      this.user.email = "";
+      this.user.password = "";
     },
   },
 };
