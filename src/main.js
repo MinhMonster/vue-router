@@ -48,7 +48,7 @@ new Vue({
 
 Vue.use(VueSweetslert2);
 Vue.use(BootstrapVue);
-Vue.use(IconsPlugin)
+Vue.use(IconsPlugin);
 Vue.use(VueAxios, { $request: axios });
 Vue.component('paginate', Paginate)
 

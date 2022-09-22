@@ -14,7 +14,6 @@ export default  new Vuex.Store({
         password: "",
         email: localStorage.getItem("email"),
         cash: "",
-        cash: "",
         token: localStorage.getItem("token"),
       },
     },

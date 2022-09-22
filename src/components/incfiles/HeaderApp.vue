@@ -5,7 +5,8 @@
         <div class="logo-header">
           <img src="/images/logo.png" alt="" />
         </div>
-        <div class="form-search flex-row-space-between">
+
+        <div class="form-search flex-row-space-between hidden">
           <div class="flex-row-space-between rel">
             <i class="icon-search fa fa-search abs"></i>
             <input type="text" class="input-search" placeholder="Search" />
@@ -14,7 +15,8 @@
             <img src="/images/User.png" alt="" />
           </a>
         </div>
-        <button class="menu-toggle" @click="(isOn = !isOn), (isOff = !isOff)">
+        <client-app></client-app>
+        <button class="menu-toggle hidden" @click="(isOn = !isOn), (isOff = !isOff)">
           <i class="fa fa-bars"></i>
         </button>
       </header>
@@ -37,7 +39,12 @@
 </template>
 
 <script>
+import ClientApp from "@/components/incfiles/ClientApp.vue";
+
 export default {
+  components: {
+    clientApp: ClientApp,
+  },
   data() {
     return {
       isOn: false,

@@ -1,121 +1,15 @@
 <template>
   <div class="body">
     <section id="main-body">
-      <div class="container bg-white mgt--20px">
-        <div class="panel-body flex-row-space-between-center">
-          <div class="btn">
-            <button class="btn btn-primary text-white">
-              <router-link to="/admin/management/products">Product</router-link>
-            </button>
-          </div>
-          <div class="btn">
-            <button class="btn btn-primary text-white">
-              <router-link to="/admin/management/products/create">Add New</router-link>
-            </button>
-
-            <button
-              @click="showFilter = !showFilter"
-              class="btn btn-info btn-sm mgl-10px text-white"
-            >
-              <i class="fa fa-search"></i>
-            </button>
-          </div>
-        </div>
-        <div v-if="showFilter" class="filter flex-row-space-between-center">
-          <div class="search-wrapper">
-            <div class="row">
-              <div class="col-md-3">
-                <input
-                  class="form-control"
-                  type="text"
-                  v-model="search.name"
-                  placeholder="Search Name"
-                />
-              </div>
-              <div class="col-md-3">
-                <input
-                  class="form-control"
-                  type="text"
-                  v-model.number="search.minprice"
-                  placeholder="Min Price"
-                />
-              </div>
-
-              <div class="col-md-3">
-                <input
-                  class="form-control"
-                  type="text"
-                  v-model.number="search.maxprice"
-                  placeholder="Max Price.."
-                />
-              </div>
-              <div class="col-md-3">
-                <input
-                  class="form-control"
-                  type="text"
-                  v-model="search.author"
-                  placeholder="Author"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card-deck mb-3 text-center scroll-x">
-          <table class="table table-primary table-bdrs-5px">
-            <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">Product name</th>
-                <th scope="col" @click="changeCurrentDir()">Price</th>
-                <th scope="col">Author</th>
-                <th scope="col">Time</th>
-                <th scope="col">Action</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              <tr v-for="(post, index) in List" :key="index">
-                <td scope="row">{{ post.pid }}</td>
-                <td>{{ post.name }}</td>
-                <td>{{ post.price }}</td>
-                <td>{{ post.author }}</td>
-                <td>{{ post.time }}</td>
-                <td class="gap-10px">
-                  <router-link
-                    :to="{
-                      name: 'admin.management.products.edit',
-                      params: { id: post.id },
-                    }"
-                  >
-                    <b-button variant="primary">
-                      <i class="fa fa-edit"></i>
-                    </b-button>
-                  </router-link>
-                  <b-button variant="danger" @click="onDelete(post.id)">
-                    <i class="fa fa-trash"></i>
-                  </b-button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div v-if="this.page.count > 1" class="panel-footer">
-          <paginate
-            v-model="params.page"
-            :page-count="this.page.count"
-            :page-range="3"
-            :margin-pages="2"
-            :click-handler="clickCallback"
-            :prev-text="'<<'"
-            :next-text="'>>'"
-            :container-class="'pagination'"
-            :page-class="'page-item'"
-          >
-          </paginate>
+      <div class="container">
+        <div class="panel-body flex-row tab-menu">
+          <router-link to="/admin/management/products"> Products</router-link>
+          <router-link to="/admin/management/users">Users</router-link>
+          <router-link to="/admin/management/login">Login</router-link>
         </div>
       </div>
     </section>
+    <router-view />
   </div>
 </template>
 <script>
@@ -133,8 +27,9 @@ export default {
         minprice: "",
         maxprice: "",
       },
+      list: [],
       products: [],
-      // List: [],
+      // pageList: [],
       page: {
         pageCount: 0,
         count: 1,
@@ -197,15 +92,14 @@ export default {
     //   this.page.pageCount = page;
     //   // this.getAll()
     // },
-    async getAll() {
+    getAll() {
       // console.log(this.builUrl());
-      await this.$request.get(this.builUrl()).then((res) => {
+      this.$request.get(this.builUrl()).then((res) => {
         this.products = res.data;
         // sort price
         // this.products = this.products.sort((a, b) => a.price - b.price);
         // sort reverse
         this.products = this.products.reverse();
-        // this.products.time = this.products.time.getUTCMilliseconds();
       });
     },
     builUrl() {
@@ -273,26 +167,23 @@ export default {
         if (this.search.minprice === "" && this.search.maxprice === "") {
           return (
             post.name.toLowerCase().includes(this.search.name.toLowerCase()) &&
-            post.author.toLowerCase().includes(this.search.author.toLowerCase()) &&
+            // post.author.toLowerCase().includes(this.search.author.toLowerCase()) &&
             post.price >= 0
           );
         } else if (this.search.minprice != "" && this.search.maxprice === "") {
           return (
             post.name.toLowerCase().includes(this.search.name.toLowerCase()) &&
-            post.author.toLowerCase().includes(this.search.author.toLowerCase()) &&
             post.price >= this.search.minprice
           );
         } else if (this.search.minprice === "" && this.search.maxprice != "") {
           return (
             post.name.toLowerCase().includes(this.search.name.toLowerCase()) &&
-            post.author.toLowerCase().includes(this.search.author.toLowerCase()) &&
             post.price >= 0 &&
             post.price <= this.search.maxprice
           );
         } else if (this.minprice != "" && this.maxprice != "") {
           return (
             post.name.toLowerCase().includes(this.search.name.toLowerCase()) &&
-            post.author.toLowerCase().includes(this.search.author.toLowerCase()) &&
             post.price >= this.search.minprice &&
             post.price <= this.search.maxprice
           );
@@ -302,27 +193,47 @@ export default {
       // },
     },
 
-    List() {
+    pageList() {
       if (this.getFilter.length % this.page.per_page === 0) {
         this.page.count = Math.floor(this.getFilter.length / this.page.per_page);
-      } else if (this.getFilter.length <= this.page.per_page) {
-        this.page.count = Math.floor(this.getFilter.length / this.page.per_page + 1);
-        this.page.pageCount = 0;
-      } else if (this.page.pageCount > this.page.count - 1) {
-        this.page.count = Math.floor(this.getFilter.length / this.page.per_page) + 1;
-        this.page.pageCount = 0;
       } else {
         this.page.count = Math.floor(this.getFilter.length / this.page.per_page + 1);
       }
-      return this.getFilter.slice(
-        this.page.per_page * this.page.pageCount,
-        this.page.per_page * (this.page.pageCount + 1)
-      );
+      console.log(this.products);
+      return this.getFilter.slice(5 * this.page.pageCount, 5 * (this.page.pageCount + 1));
     },
   }, // components: { HeaderApp },
 };
 </script>
 <style>
+#main-body {
+  /* background: var(--dark-2) !important; */
+}
+.tab-menu {
+  /* background: #333; */
+  display: flex;
+  align-items: center;
+  height: 36px;
+  margin-bottom: -20px;
+}
+.tab-menu a {
+  color: #000;
+  padding: 10px 20px;
+  /* margin-right: 20px; */
+  min-width: 100px;
+}
+
+.tab-menu a.router-link-exact-active,
+.tab-menu a:hover,
+.tab-menu a.router-link-active {
+  /* border-bottom: 2px solid var(--dark); */
+  color: var(--dark);
+  font-weight: 700;
+  background: url(@/assets/images/admin/tab/tab-active.png);
+  background-size: cover;
+  background-repeat: repeat-x;
+}
+
 table {
   border-radius: 6px;
 }

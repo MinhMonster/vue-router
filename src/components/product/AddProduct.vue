@@ -4,7 +4,7 @@
       <div class="add-product">
         <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
           <h3 class="display-5">Product Information</h3>
-          <router-link to="/admin/products">Back</router-link>
+          <router-link to="/admin/management/products">Back</router-link>
         </div>
         <div class="container">
           <form
@@ -87,8 +87,11 @@ export default {
         price: "",
         description: "",
       },
+      products: [],
       product: {
         id: "",
+        pid: "",
+        author: "",
         name: "",
         price: "",
         description: "",
@@ -102,6 +105,7 @@ export default {
     if (productId) {
       this.getProduct(productId);
     }
+    this.getAll();
   },
   methods: {
     ...mapActions([""]),
@@ -132,39 +136,44 @@ export default {
     isNumber(value) {
       return /^\d*$/.test(value);
     },
-    save() {
+    async save() {
       if (this.validate()) {
         if (this.product.id) {
           this.$request
             .put(`http://localhost:8000/api/products/${this.product.id}`, this.product)
             .then((res) => {
               if (res.data.success) {
-                this.$router.push({ name: "product.list" });
+                this.$router.push({ name: "admin.products" });
                 return;
               }
               alert("Errors");
             });
           return;
         }
-        // let max = 0
-        // let newID = 0
-        // // console.log(newID)
-        // for (let i = 0; i < this.products.length; i++) {
-        //   console.log(this.products.length)
-        //   if (this.products[i].id > max) {
-        //     max = this.products[i].id
-        //   }
-        //   // return this.product.id
-        // }
-        // newID = max + 1
-        // this.product.id = newID
+        await this.getAll();
+        let max = 0;
+        let newID = 0;
         // console.log(newID)
-        this.product.time = new Date().toLocaleString();
+        for (let i = 0; i < this.products.length; i++) {
+          console.log(this.products.length);
+          if (this.products[i].pid > max) {
+            max = this.products[i].pid;
+          }
+          // return this.product.id
+        }
+        newID = max + 1;
+        this.product.pid = newID;
+        console.log(newID);
+        var md5 = require("md5");
+        console.log(md5("message"));
+        this.product.time = new Date().getTime();
+        this.product.author = this.$store.state.user.email;
+        this.product.pid = newID;
         this.$request
           .post("http://localhost:8000/api/products", this.product)
           .then((res) => {
             if (res.data.success) {
-              this.$router.push({ name: "product.list" });
+              this.$router.push({ name: "admin.products" });
             }
           });
       }
@@ -179,6 +188,23 @@ export default {
       (this.product.name = ""),
         (this.product.price = ""),
         (this.product.description = "");
+    },
+    async getAll() {
+      console.log(this.builUrl());
+      await this.$request.get(this.builUrl()).then((res) => {
+        this.products = res.data;
+        // sort price
+        // this.products = this.products.sort((a, b) => a.price - b.price);
+        // sort reverse
+        this.products = this.products.reverse();
+        var md5 = require("md5");
+        console.log(md5("message"));
+      });
+    },
+    builUrl() {
+      // let p = this.params;
+      // return `http://localhost:8000/api/products?page=${p.page}&per_page=${p.per_page}&sort_column=${p.sort_column}&direction=${p.direction}&search_column=${p.search_column}&search_operator=${p.search_operator}&search_query_1=${p.search_query_1}&search_query_2=${p.search_query_2}`;
+      return `http://localhost:8000/api/products`;
     },
   },
 };

@@ -1,44 +1,41 @@
 <template>
-  <div id="app">
+  <div id="admin">
     <!-- <h1>{{ $store.state.count }}</h1> -->
-    <!-- <ClientApp />
-    <HeaderApp />
-    <MenuApp /> -->
-    <!-- <TestVueX2 /> -->
-    <!-- <TestVueX /> -->
-    <!-- {{ $st }} -->
-    <!-- <MenuLeft /> -->
+    <!-- <client-app></client-app> -->
+    <header-app></header-app>
+    <menu-app></menu-app>
+
     <router-view />
     <!-- <FooterApp /> -->
   </div>
 </template>
 <script>
-// import HeaderApp from "@/components/incfiles/HeaderApp.vue";
-// import MenuIcon from "@/components/incfiles/MenuApp.vue";
-// import MenuApp from "@/components/incfiles/MenuApp.vue";
-// import TestVueX from "./components/tester/TestVueX.vue";
-// import TestVueX2 from "./components/tester/TestVueX2.vue";
-// import ClientApp from "./components/incfiles/ClientApp.vue";
-
 // import MenuLeft from "@/components/incfiles/MenuLeft.vue";
 // import FooterApp from "@/components/incfiles/FooterApp.vue";
 // import "./assets/js/style.js";
+// import ClientApp from "@/components/incfiles/ClientApp.vue";
+import HeaderApp from "@/components/incfiles/HeaderApp.vue";
+import MenuApp from "@/components/incfiles/MenuApp.vue";
 
 export default {
   // name: "App",
   components: {
-    // HeaderApp,
-    // MenuIcon,
-    // MenuApp,
-    // TestVueX,
-    // TestVueX2,
-    // ClientApp,
+    headerApp: HeaderApp,
+    menuApp: MenuApp,
+    // clientApp: ClientApp,
   },
   methods: {
     toggle() {
       document.getElementsByClassName("sold").classList.toggle("hide");
     },
+    // checklogin() {
+    //   if (localStorage.getItem("login") === "offline") {
+    //     console.log(localStorage.getItem("login"));
+    //     return (window.location.href = "/admin/login");
+    //   }
+    // },
   },
+  computed: {},
 };
 </script>
 

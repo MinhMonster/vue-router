@@ -3,8 +3,8 @@
     class="menu-icon"
     :class="{ 'menu-left-on': isActive, 'menu-left-off': !isActive }"
   >
-    Window width: {{ windowWidth }} <br />
-    Window height: {{ windowHeight }}
+    <!-- Window width: {{ windowWidth }} <br />
+    Window height: {{ windowHeight }} -->
     <section id="menu-icon" class="dark" :class="{ active: isActive }">
       <div class="logo">
         <img src="/images/logo.png" alt="" />
@@ -18,12 +18,16 @@
       </button>
       <ul class="icon-img">
         <li>
-          <router-link to="/admin/products"><img src="/images/Icon-1.png" alt="" /></router-link>
+          <router-link to="/admin/products"
+            ><img src="/images/Icon-1.png" alt=""
+          /></router-link>
         </li>
         <li>
-          <router-link to="/admin/users"><img src="/images/Icon-2.png" alt="" /></router-link>
+          <router-link to="/admin/users"
+            ><img src="/images/Icon-2.png" alt=""
+          /></router-link>
           <!-- <a href="/admin/users"> -->
-            
+
           <!-- </a> -->
         </li>
         <li class="active">
